@@ -19,3 +19,10 @@ type SendMessageRequest struct {
 	ChatID 		string	`json:"chatID" bson:"chatID,omitempty"`
 	MessageBody string	`json:"message_body" bson:"message_body"`
 }
+
+type ListRoomMesaggesRequest struct {
+	ChatID 		string	`json:"chatID" bson:"chatID,omitempty"`
+	Limit 		int		`json:"limit" bson:"limit"`
+	Offset		int		`json:"offset" bson:"offset"`
+	NewestFirst	bool	`json:"newest_first" bson:"newest_first"`
+}

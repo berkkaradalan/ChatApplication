@@ -27,3 +27,12 @@ func (s *MessageService) SendMessage(ctx context.Context, requestBody *models.Se
 
 	return message, nil
 }
+
+func (s *MessageService) GetMessages(ctx context.Context, requestBody *models.ListRoomMesaggesRequest) ([]*models.Message, error) {
+	messages, err := s.messageRepository.GetMessages(ctx, requestBody.ChatID, requestBody.Limit, requestBody.Offset, requestBody.NewestFirst)
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}

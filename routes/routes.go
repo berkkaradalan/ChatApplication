@@ -15,6 +15,6 @@ func SetupRoutes(router *gin.Engine, authConfig *config.AuthConfig, roomHandler 
 		protected.GET("/chat-room/:id", roomHandler.GetRoom)
 		protected.GET("/chat-rooms", roomHandler.ListRooms)
 		protected.POST("/message", messageHandler.SendMessage)
-		// protected.GET("/message/:chatID", roomHandler.GetMessages) // TODO: Implement GetMessages
+		protected.GET("/message", messageHandler.GetMessages)
 	}
 }

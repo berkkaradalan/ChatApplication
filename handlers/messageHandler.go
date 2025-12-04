@@ -42,3 +42,23 @@ func (h *MessageHandler) SendMessage(c *gin.Context) {
 		"message": message,
 	})
 }
+
+func (h *MessageHandler) GetMessages(c *gin.Context){
+	var req *models.ListRoomMesaggesRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		return
+	}
+
+	chatMessages, err := h.MessageService.GetMessages(c, req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"messages": chatMessages,
+		"count": len(chatMessages),
+	})
+}
