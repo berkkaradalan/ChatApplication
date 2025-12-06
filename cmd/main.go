@@ -63,7 +63,8 @@ func main() {
 
 	// Setup chat routes
 	authConfig := config.NewAuthConfig(*env)
-	routes.SetupRoutes(router, authConfig, roomHandler, messageHandler)
+	wsHandler := handlers.NewWebSocketHandler(authConfig)
+	routes.SetupRoutes(router, authConfig, roomHandler, messageHandler, wsHandler)
 
 	log.Printf("Server starting on port %s...", env.PORT)
 	if err := router.Run(":" + env.PORT); err != nil {

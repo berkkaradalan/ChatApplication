@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/berkkaradalan/chatApp/middleware"
 	"github.com/berkkaradalan/chatApp/models"
 	"github.com/berkkaradalan/chatApp/services"
+	"github.com/berkkaradalan/chatApp/websocket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,7 +40,7 @@ func (h *RoomHandler) GetRoom(c *gin.Context) {
 }
 
 func (h *RoomHandler) CreateRoom(c *gin.Context) {
-	var req *models.CreateRoomRequest
+	var req models.CreateRoomRequest
     if err := c.ShouldBindJSON(&req); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
@@ -49,9 +51,20 @@ func (h *RoomHandler) CreateRoom(c *gin.Context) {
 	room, err := h.RoomService.CreateRoom(c, req.RoomName, createdBy)
 
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
+		return
+	}
+
+	// Broadcast room creation to all clients listening on the system rooms channel
+	hub := websocket.GetHub()
+	roomJSON, err := json.Marshal(map[string]interface{}{
+		"event": "room_created",
+		"room":  room,
+	})
+	if err == nil {
+		hub.BroadcastToRoom("__system:rooms__", roomJSON)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
